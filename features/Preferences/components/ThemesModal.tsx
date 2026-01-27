@@ -71,31 +71,12 @@ const ThemeCard = memo(function ThemeCard({
       </div>
       <div className='flex gap-1.5'>
         <div
-          className='h-4 w-4 rounded-full ring-1'
-          style={
-            {
-              background: theme.backgroundColor,
-              '--tw-ring-color': theme.borderColor,
-            } as React.CSSProperties
-          }
+          className='h-4 w-4 rounded-full'
+          style={{ background: theme.mainColor }}
         />
         <div
-          className='h-4 w-4 rounded-full ring-1'
-          style={
-            {
-              background: theme.mainColor,
-              '--tw-ring-color': theme.borderColor,
-            } as React.CSSProperties
-          }
-        />
-        <div
-          className='h-4 w-4 rounded-full ring-1'
-          style={
-            {
-              background: theme.secondaryColor,
-              '--tw-ring-color': theme.borderColor,
-            } as React.CSSProperties
-          }
+          className='h-4 w-4 rounded-full'
+          style={{ background: theme.secondaryColor }}
         />
       </div>
     </div>
