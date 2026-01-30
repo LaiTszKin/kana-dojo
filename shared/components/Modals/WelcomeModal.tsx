@@ -75,7 +75,7 @@ const WelcomeModal = () => {
     if (!hasSeenWelcome || ((isDev || isPreviewDeployment) && isBaseRoute)) {
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 1000);
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [hasSeenWelcome, pathname]);
