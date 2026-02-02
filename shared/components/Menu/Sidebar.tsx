@@ -180,41 +180,39 @@ const NavLink = memo(
         : 'max-lg:py-2 lg:py-2';
 
       return (
-        <div className={!isMain ? 'lg:-mt-1' : undefined}>
-          <div className='relative lg:w-full'>
-            {/* Sliding indicator - smooth spring animation */}
-            {isActive && (
-              <motion.div
-                layoutId='sidebar-nav-indicator'
-                className={indicatorClasses}
-                transition={{
-                  type: 'spring',
-                  stiffness: 300,
-                  damping: 30,
-                }}
-              />
+        <div className='relative lg:w-full'>
+          {/* Sliding indicator - smooth spring animation */}
+          {isActive && (
+            <motion.div
+              layoutId='sidebar-nav-indicator'
+              className={indicatorClasses}
+              transition={{
+                type: 'spring',
+                stiffness: 300,
+                damping: 30,
+              }}
+            />
+          )}
+          <Link
+            href={item.href}
+            prefetch
+            onClick={onClick}
+            className={clsx(
+              'relative z-10 flex items-center gap-2 rounded-2xl',
+              isMain ? 'text-2xl' : isExperiment ? 'text-sm' : 'text-base',
+              'max-lg:justify-center max-lg:px-3 lg:w-full lg:px-4',
+              paddingClasses,
+              !isMain && 'max-lg:hidden',
+              isActive
+                ? activeTextClass
+                : 'text-(--secondary-color) hover:bg-(--card-color)',
             )}
-            <Link
-              href={item.href}
-              prefetch
-              onClick={onClick}
-              className={clsx(
-                'relative z-10 flex items-center gap-2 rounded-2xl',
-                isMain ? 'text-2xl' : isExperiment ? 'text-sm' : 'text-base',
-                'max-lg:justify-center max-lg:px-3 lg:w-full lg:px-4',
-                paddingClasses,
-                !isMain && 'max-lg:hidden',
-                isActive
-                  ? activeTextClass
-                  : 'text-(--secondary-color) hover:bg-(--card-color)',
-              )}
-            >
-              {renderIcon()}
-              <span className={isMain ? 'max-lg:hidden' : undefined}>
-                {item.label}
-              </span>
-            </Link>
-          </div>
+          >
+            {renderIcon()}
+            <span className={isMain ? 'max-lg:hidden' : undefined}>
+              {item.label}
+            </span>
+          </Link>
         </div>
       );
     }
@@ -222,51 +220,47 @@ const NavLink = memo(
     // Active state with ActionButton style (non-sliding)
     if (isActive && USE_ACTION_BUTTON_STYLE) {
       return (
-        <div className={!isMain ? 'lg:-mt-1' : undefined}>
-          <Link
-            href={item.href}
-            prefetch
-            onClick={onClick}
-            className='w-full max-lg:contents'
+        <Link
+          href={item.href}
+          prefetch
+          onClick={onClick}
+          className='w-full max-lg:contents'
+        >
+          <ActionButton
+            borderBottomThickness={6}
+            borderRadius='xl'
+            className={clsx(
+              'flex items-center gap-2',
+              isMain ? 'text-2xl' : isExperiment ? 'text-sm' : 'text-base',
+              'max-lg:justify-center max-lg:px-3 max-lg:py-2 lg:w-full lg:px-4 lg:py-2',
+              !isMain && 'max-lg:hidden',
+            )}
           >
-            <ActionButton
-              borderBottomThickness={6}
-              borderRadius='xl'
-              className={clsx(
-                'flex items-center gap-2',
-                isMain ? 'text-2xl' : isExperiment ? 'text-sm' : 'text-base',
-                'max-lg:justify-center max-lg:px-3 max-lg:py-2 lg:w-full lg:px-4 lg:py-2',
-                !isMain && 'max-lg:hidden',
-              )}
-            >
-              {renderIcon()}
-              <span className={isMain ? 'max-lg:hidden' : undefined}>
-                {item.label}
-              </span>
-            </ActionButton>
-          </Link>
-        </div>
+            {renderIcon()}
+            <span className={isMain ? 'max-lg:hidden' : undefined}>
+              {item.label}
+            </span>
+          </ActionButton>
+        </Link>
       );
     }
 
     // Default Link style (used for inactive, or active with simple style)
     return (
-      <div className={!isMain ? 'lg:-mt-1' : undefined}>
-        <Link
-          href={item.href}
-          prefetch
-          className={clsx(
-            baseClasses,
-            isActive ? activeClassesSimple : inactiveClasses,
-          )}
-          onClick={onClick}
-        >
-          {renderIcon()}
-          <span className={isMain ? 'max-lg:hidden' : undefined}>
-            {item.label}
-          </span>
-        </Link>
-      </div>
+      <Link
+        href={item.href}
+        prefetch
+        className={clsx(
+          baseClasses,
+          isActive ? activeClassesSimple : inactiveClasses,
+        )}
+        onClick={onClick}
+      >
+        {renderIcon()}
+        <span className={isMain ? 'max-lg:hidden' : undefined}>
+          {item.label}
+        </span>
+      </Link>
     );
   },
 );
@@ -290,7 +284,7 @@ const SectionHeader = ({
     return (
       <button
         onClick={onToggle}
-        className='mt-3 flex w-full cursor-pointer items-center gap-1 px-4 text-xs text-(--main-color) uppercase opacity-70 transition-opacity hover:opacity-100 max-lg:hidden'
+        className='mt-1.5 flex w-full cursor-pointer items-center gap-1 px-4 text-xs text-(--main-color) uppercase opacity-70 transition-opacity hover:opacity-100 max-lg:hidden'
       >
         {isExpanded ? (
           <ChevronDown className='h-3 w-3' />
@@ -303,7 +297,7 @@ const SectionHeader = ({
   }
 
   return (
-    <div className='mt-3 w-full px-4 text-xs text-(--main-color) uppercase opacity-70 max-lg:hidden'>
+    <div className='mt-1.5 w-full px-4 text-xs text-(--main-color) uppercase opacity-70 max-lg:hidden'>
       {title}
     </div>
   );
