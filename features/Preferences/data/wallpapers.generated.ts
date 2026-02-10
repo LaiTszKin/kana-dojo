@@ -54,4 +54,10 @@ export const GENERATED_WALLPAPERS: GeneratedWallpaper[] = [
     url: '/wallpapers/bangkok-sunset-1920w.avif',
     urlWebp: '/wallpapers/bangkok-sunset-1920w.webp',
   },
+  {
+    id: 'retro-city',
+    name: 'Retro City',
+    url: '/wallpapers/retro-city-1920w.avif',
+    urlWebp: '/wallpapers/retro-city-1920w.webp',
+  },
 ];
