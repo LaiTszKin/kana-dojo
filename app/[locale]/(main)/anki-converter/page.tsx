@@ -17,7 +17,13 @@ export const revalidate = 3600;
 
 const BASE_URL = 'https://kanadojo.com';
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const ogLocale = locale === 'es' ? 'es_ES' : 'en_US';
   const title =
     'Free Anki Deck to JSON Converter | Convert APKG, TSV, SQLite Files Online';
   const description =
@@ -47,9 +53,9 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       type: 'website',
-      url: `${BASE_URL}/en/anki-converter`,
+      url: `${BASE_URL}/anki-converter`,
       siteName: 'KanaDojo',
-      locale: 'en_US',
+      locale: ogLocale,
       images: [
         {
           url: `${BASE_URL}/api/og?title=${encodeURIComponent('Anki Deck to JSON Converter')}&description=${encodeURIComponent('Free, private, browser-based conversion')}`,
@@ -66,10 +72,6 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: `${BASE_URL}/anki-converter`,
-      languages: {
-        en: `${BASE_URL}/en/anki-converter`,
-        es: `${BASE_URL}/es/anki-converter`,
-      },
     },
     robots: {
       index: true,
@@ -148,7 +150,7 @@ const webApplicationSchema = {
   '@type': 'WebApplication',
   name: 'Anki Deck to JSON Converter',
   alternateName: 'Anki Converter',
-  url: `${BASE_URL}/en/anki-converter`,
+  url: `${BASE_URL}/anki-converter`,
   applicationCategory: 'UtilityApplication',
   applicationSubCategory: 'File Converter',
   operatingSystem: 'Any',

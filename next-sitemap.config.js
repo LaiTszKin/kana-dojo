@@ -1,3 +1,38 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+function getAcademyPostPaths() {
+  const postsDir = path.join(
+    process.cwd(),
+    'features',
+    'Blog',
+    'content',
+    'posts',
+    'en',
+  );
+  const paths = [];
+
+  function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(fullPath);
+        continue;
+      }
+
+      if (entry.isFile() && entry.name.endsWith('.mdx')) {
+        paths.push(`/academy/${path.basename(entry.name, '.mdx')}`);
+      }
+    }
+  }
+
+  if (fs.existsSync(postsDir)) {
+    walk(postsDir);
+  }
+
+  return paths;
+}
+
 /** @type {import('next-sitemap').IConfig} */
 const sitemapConfig = {
   siteUrl: process.env.SITE_URL || 'https://kanadojo.com',
@@ -7,6 +42,7 @@ const sitemapConfig = {
   priority: 0.7,
   sitemapSize: 5000,
   additionalPaths: async config => {
+    const academyPaths = getAcademyPostPaths();
     const corePaths = [
       '/',
       '/kana',
@@ -26,11 +62,12 @@ const sitemapConfig = {
       '/jlpt/n4',
       '/jlpt/n3',
       '/resources',
-      '/tools/anki-converter',
-      '/tools/kana-chart',
+      '/anki-converter',
+      '/kana-chart',
     ];
 
-    return corePaths.map(loc => ({
+    const uniquePaths = [...new Set([...corePaths, ...academyPaths])];
+    return uniquePaths.map(loc => ({
       loc,
       changefreq: config.changefreq,
       priority:
@@ -40,11 +77,56 @@ const sitemapConfig = {
       lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
     }));
   },
-  exclude: ['/api/*', '/_next/*', '/*/train/*'],
+  exclude: [
+    '/api/*',
+    '/_next/*',
+    '/en',
+    '/es',
+    '/en/*',
+    '/es/*',
+    '/tools/*',
+    '/*/train/*',
+  ],
   robotsTxtOptions: {
     policies: [
       {
         userAgent: '*',
+        allow: '/',
+      },
+      {
+        userAgent: 'GPTBot',
+        allow: '/',
+      },
+      {
+        userAgent: 'ChatGPT-User',
+        allow: '/',
+      },
+      {
+        userAgent: 'Claude-Web',
+        allow: '/',
+      },
+      {
+        userAgent: 'anthropic-ai',
+        allow: '/',
+      },
+      {
+        userAgent: 'PerplexityBot',
+        allow: '/',
+      },
+      {
+        userAgent: 'Google-Extended',
+        allow: '/',
+      },
+      {
+        userAgent: 'CCBot',
+        allow: '/',
+      },
+      {
+        userAgent: 'Applebot',
+        allow: '/',
+      },
+      {
+        userAgent: 'Amazonbot',
         allow: '/',
       },
     ],
@@ -61,6 +143,9 @@ const sitemapConfig = {
       '/kanji': 0.9,
       '/vocabulary': 0.9,
       '/conjugate': 0.9,
+      '/anki-converter': 0.85,
+      '/academy': 0.85,
+      '/resources': 0.85,
     };
 
     const changefreqs = {
@@ -70,6 +155,8 @@ const sitemapConfig = {
       '/translate/japanese-to-english': 'weekly',
       '/translate/romaji': 'weekly',
       '/conjugate': 'daily',
+      '/academy': 'daily',
+      '/resources': 'daily',
     };
 
     return {

@@ -91,10 +91,10 @@ export default async function ConjugatePage({
       <StructuredData data={structuredData} />
       <BreadcrumbSchema
         items={[
-          { name: 'Home', url: `https://kanadojo.com/${locale}` },
+          { name: 'Home', url: 'https://kanadojo.com' },
           {
             name: 'Verb Conjugator',
-            url: `https://kanadojo.com/${locale}/conjugate`,
+            url: 'https://kanadojo.com/conjugate',
           },
         ]}
       />
