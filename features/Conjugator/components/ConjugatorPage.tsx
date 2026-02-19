@@ -103,7 +103,6 @@ export default function ConjugatorPage({ locale = 'en' }: ConjugatorPageProps) {
       setShareButtonState('copied');
       setTimeout(() => setShareButtonState('idle'), 2000);
     } catch {
-      // Fallback: try using the Web Share API
       if (navigator.share) {
         try {
           await navigator.share({
@@ -124,48 +123,45 @@ export default function ConjugatorPage({ locale = 'en' }: ConjugatorPageProps) {
 
   return (
     <div
-      className='mx-auto flex w-full max-w-4xl flex-col gap-6'
+      className='mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-8 sm:gap-16 sm:px-6'
       role='main'
       aria-label='Japanese verb conjugator'
     >
-      {/* Header with SEO-optimized content */}
-      <header
-        className={cn(
-          'flex flex-col items-start gap-4 rounded-2xl p-4 sm:flex-row sm:items-center sm:p-6',
-          'bg-gradient-to-r from-(--card-color) to-(--background-color)',
-        )}
-      >
-        <div
-          className={cn(
-            'rounded-xl bg-(--main-color)/10 p-2.5 sm:p-3',
-          )}
-          aria-hidden='true'
-        >
-          <Languages className='h-6 w-6 text-(--main-color) sm:h-8 sm:w-8' />
-        </div>
-        <div className='flex-1'>
-          <h1 className='text-2xl font-bold text-(--main-color) sm:text-3xl'>
-            Japanese Verb Conjugator
+      {/* Header Section */}
+      <header className='relative flex flex-col items-center gap-8'>
+        <div className='flex flex-col items-center text-center'>
+          <div
+            className='mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-(--main-color)/5 ring-1 ring-(--main-color)/10'
+            aria-hidden='true'
+          >
+            <Languages className='h-7 w-7 text-(--main-color)' />
+          </div>
+          <h1 className='relative text-4xl font-black tracking-tight text-(--main-color) sm:text-6xl lg:text-7xl'>
+            <span className='hero-text-glow bg-gradient-to-br from-(--main-color) to-(--secondary-color) bg-clip-text text-transparent'>
+              Japanese Verb
+            </span>
+            <span className='mt-2 block font-serif text-(--secondary-color) italic sm:mt-0 sm:ml-4 sm:inline'>
+              Conjugator
+            </span>
           </h1>
-          <p className='mt-1 text-sm text-(--secondary-color) sm:text-base'>
-            <strong>Conjugate any Japanese verb</strong> instantly. Get all
-            forms including te-form, masu-form, potential, passive, causative,
-            and more.
+          <p className='mt-6 max-w-2xl text-lg leading-relaxed font-medium text-(--secondary-color) opacity-70 sm:text-xl'>
+            A precision-engineered tool for mastering Japanese grammar.
+            Experience the art of conjugation with absolute clarity.
           </p>
         </div>
-        {/* Share button - Requirements: 12.3 */}
+
+        {/* Share Button (Material FAB style approach) */}
         {result && (
           <button
             onClick={handleShare}
             className={cn(
-              'flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all',
-              'bg-(--card-color)',
-              'hover:bg-(--main-color)/10',
-              'focus:ring-2 focus:ring-(--main-color)/50 focus:outline-none',
+              'group flex items-center gap-2 rounded-full px-6 py-3 text-xs font-black tracking-widest uppercase transition-all active:scale-95',
+              'bg-(--card-color) text-(--secondary-color)',
+              'border border-(--border-color)/40 shadow-lg shadow-black/5 hover:border-(--main-color)/30 hover:shadow-xl',
               shareButtonState === 'copied' &&
-                'bg-green-500/10 text-green-600',
+                'border-transparent bg-green-500 text-white shadow-green-500/20',
               shareButtonState === 'error' &&
-                'bg-red-500/10 text-red-600',
+                'border-transparent bg-red-500 text-white shadow-red-500/20',
             )}
             aria-label={
               shareButtonState === 'copied'
@@ -179,12 +175,12 @@ export default function ConjugatorPage({ locale = 'en' }: ConjugatorPageProps) {
             {shareButtonState === 'copied' ? (
               <>
                 <Check className='h-4 w-4' aria-hidden='true' />
-                <span className='hidden sm:inline'>Copied!</span>
+                <span>Copied to Clipboard</span>
               </>
             ) : (
               <>
-                <Share2 className='h-4 w-4' aria-hidden='true' />
-                <span className='hidden sm:inline'>Share</span>
+                <Share2 className='h-4 w-4 transition-transform group-hover:rotate-12' />
+                <span>Share Results</span>
               </>
             )}
           </button>
@@ -192,29 +188,33 @@ export default function ConjugatorPage({ locale = 'en' }: ConjugatorPageProps) {
       </header>
 
       {/* Main content area */}
-      <div className='grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]'>
+      <div className='grid grid-cols-1 gap-12 lg:grid-cols-[1fr_380px] lg:gap-20'>
         {/* Left column - Input and Results */}
-        <div className='flex flex-col gap-6'>
+        <div className='flex flex-col gap-12 sm:gap-20'>
           {/* Input section */}
-          <ConjugatorInput
-            value={inputText}
-            onChange={setInputText}
-            onConjugate={handleConjugate}
-            isLoading={isLoading}
-            error={error}
-          />
+          <section aria-label='Verb Search'>
+            <ConjugatorInput
+              value={inputText}
+              onChange={setInputText}
+              onConjugate={handleConjugate}
+              isLoading={isLoading}
+              error={error}
+            />
+          </section>
 
           {/* Results section */}
-          <ConjugationResults
-            result={result}
-            isLoading={isLoading}
-            expandedCategories={expandedCategories}
-            onToggleCategory={toggleCategory}
-            onExpandAll={expandAllCategories}
-            onCollapseAll={collapseAllCategories}
-            onCopyForm={copyForm}
-            onCopyAll={copyAllForms}
-          />
+          <section aria-label='Conjugation Results'>
+            <ConjugationResults
+              result={result}
+              isLoading={isLoading}
+              expandedCategories={expandedCategories}
+              onToggleCategory={toggleCategory}
+              onExpandAll={expandAllCategories}
+              onCollapseAll={collapseAllCategories}
+              onCopyForm={copyForm}
+              onCopyAll={copyAllForms}
+            />
+          </section>
         </div>
 
         {/* Right column - History (desktop) */}
@@ -222,7 +222,7 @@ export default function ConjugatorPage({ locale = 'en' }: ConjugatorPageProps) {
           className='hidden lg:block'
           aria-label='Conjugation history sidebar'
         >
-          <div className='sticky top-4'>
+          <div className='sticky top-8'>
             <ConjugationHistory
               entries={history}
               onSelect={restoreFromHistory}

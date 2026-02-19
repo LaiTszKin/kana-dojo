@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useEffect } from 'react';
-import { X, Keyboard, Search } from 'lucide-react';
+import { X, Keyboard, Search, Loader2 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { ActionButton } from '@/shared/components/ui/ActionButton';
 import type { ConjugationError } from '../types';
@@ -82,144 +82,148 @@ export default function ConjugatorInput({
   return (
     <div
       className={cn(
-        'flex w-full flex-col gap-4 rounded-2xl p-4 sm:p-5',
-        'bg-(--card-color)',
-        'shadow-lg shadow-black/5',
+        'group relative flex w-full flex-col gap-8 rounded-3xl p-8 transition-all duration-500 sm:p-10',
+        'bg-(--card-color)/50 backdrop-blur-sm',
+        'border border-(--border-color)/30 shadow-2xl shadow-black/5',
+        'hover:border-(--main-color)/20 hover:shadow-black/10',
       )}
       role='search'
       aria-label='Japanese verb conjugation input'
     >
-      {/* Header */}
-      <div className='flex items-center gap-3'>
+      {/* Search Header */}
+      <div className='flex items-center gap-6'>
         <div
-          className={cn(
-            'rounded-lg p-2',
-            'bg-(--main-color)/10',
-          )}
+          className='flex h-12 w-12 items-center justify-center rounded-xl bg-(--main-color) text-(--background-color) shadow-(--main-color)/20 shadow-lg'
           aria-hidden='true'
         >
-          <Search className='h-5 w-5 text-(--main-color)' />
+          <Search className='h-5 w-5' />
         </div>
         <div>
           <h2
-            className='text-base font-semibold text-(--main-color) sm:text-lg'
+            className='text-xl font-black tracking-tight text-(--main-color) sm:text-2xl'
             id='verb-input-label'
           >
-            Enter a Japanese Verb
+            Universal Search
           </h2>
           <p
-            className='text-xs text-(--secondary-color)'
+            className='text-sm font-medium text-(--secondary-color) opacity-50'
             id='verb-input-hint'
           >
-            Dictionary form (e.g., 食べる, 行く, する)
+            Enter a Japanese verb in any form
           </p>
         </div>
       </div>
 
-      {/* Input field with clear button */}
-      <div className='relative flex items-center gap-2'>
-        <input
-          ref={inputRef}
-          type='text'
-          value={value}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          disabled={isDisabled}
-          placeholder='日本語の動詞を入力...'
-          className={cn(
-            'h-12 w-full rounded-xl px-4 sm:h-14 sm:px-5',
-            'bg-(--background-color)',
-            'text-lg text-(--main-color) placeholder:text-(--secondary-color)/60 sm:text-xl',
-            'font-japanese',
-            'focus:border-transparent focus:ring-2 focus:ring-(--main-color) focus:outline-none',
-            'transition-all duration-200',
-            error && 'focus:ring-red-500',
-            isDisabled && 'cursor-not-allowed opacity-60',
-          )}
-          aria-labelledby='verb-input-label'
-          aria-describedby={
-            error ? 'input-error verb-input-hint' : 'verb-input-hint'
-          }
-          aria-invalid={!!error}
-          autoComplete='off'
-          autoCorrect='off'
-          autoCapitalize='off'
-          spellCheck='false'
-          lang='ja'
-        />
-
-        {/* Clear button */}
-        {value.length > 0 && (
-          <ActionButton
-            onClick={handleClear}
+      {/* Input Field Container */}
+      <div className='relative flex flex-col gap-4'>
+        <div className='relative flex items-center'>
+          <input
+            ref={inputRef}
+            type='text'
+            value={value}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
             disabled={isDisabled}
-            colorScheme='secondary'
-            borderColorScheme='secondary'
-            borderRadius='xl'
-            borderBottomThickness={6}
+            placeholder='e.g. 食べる, 行く, する...'
             className={cn(
-              'absolute right-2 h-8 !w-8 !min-w-8 !p-0',
-              'disabled:cursor-not-allowed disabled:opacity-50',
+              'h-20 w-full rounded-2xl px-8 sm:h-24 sm:px-10',
+              'bg-(--background-color) text-3xl text-(--main-color) placeholder:text-(--secondary-color)/30 sm:text-4xl',
+              'font-japanese tracking-wide',
+              'border border-(--border-color)/20 shadow-inner transition-all duration-300',
+              'focus:border-(--main-color)/40 focus:ring-8 focus:ring-(--main-color)/5 focus:outline-none',
+              error &&
+                'border-red-500/50 focus:border-red-500 focus:ring-red-500/5',
+              isDisabled && 'cursor-not-allowed opacity-60',
             )}
-            aria-label='Clear input field'
+            aria-labelledby='verb-input-label'
+            aria-describedby={
+              error ? 'input-error verb-input-hint' : 'verb-input-hint'
+            }
+            aria-invalid={!!error}
+            autoComplete='off'
+            autoCorrect='off'
+            autoCapitalize='off'
+            spellCheck='false'
+            lang='ja'
+          />
+
+          {/* Clear button */}
+          {value.length > 0 && !isDisabled && (
+            <button
+              onClick={handleClear}
+              className={cn(
+                'absolute right-6 flex h-10 w-10 items-center justify-center rounded-full transition-all sm:right-8',
+                'bg-(--secondary-color)/10 text-(--secondary-color) hover:bg-(--secondary-color)/20 hover:text-(--main-color)',
+              )}
+              aria-label='Clear input field'
+            >
+              <X className='h-5 w-5' aria-hidden='true' />
+            </button>
+          )}
+        </div>
+
+        {/* Error Message Section */}
+        {error && (
+          <div
+            id='input-error'
+            className={cn(
+              'flex items-center gap-3 rounded-xl p-4',
+              'border border-red-500/20 bg-red-500/5',
+              'animate-in fade-in slide-in-from-top-2 text-sm font-bold text-red-500',
+            )}
+            role='alert'
+            aria-live='polite'
           >
-            <X className='h-4 w-4' aria-hidden='true' />
-          </ActionButton>
+            <div className='h-1.5 w-1.5 scale-125 rounded-full bg-red-500' />
+            {getErrorMessage(error)}
+          </div>
         )}
       </div>
 
-      {/* Error message */}
-      {error && (
-        <div
-          id='input-error'
+      {/* Action Section */}
+      <div className='flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between'>
+        <ActionButton
+          onClick={onConjugate}
+          disabled={!canConjugate}
+          gradient
+          borderRadius='xl'
+          borderBottomThickness={0}
           className={cn(
-            'flex items-center gap-2 rounded-lg p-3',
-            'bg-red-500/10',
-            'text-sm text-red-500',
+            'h-16 w-full text-sm font-black tracking-[0.2em] uppercase sm:h-18 sm:w-auto sm:px-12',
+            'shadow-(--main-color)/10 shadow-xl transition-all hover:scale-[1.02] hover:shadow-(--main-color)/20 active:scale-95',
+            'disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:scale-100',
           )}
-          role='alert'
-          aria-live='polite'
+          aria-label={
+            isLoading ? 'Conjugating verb, please wait' : 'Conjugate verb'
+          }
+          aria-busy={isLoading}
         >
-          {getErrorMessage(error)}
+          {isLoading ? (
+            <div className='flex items-center gap-3'>
+              <Loader2 className='h-5 w-5 animate-spin' />
+              <span>Conjugating</span>
+            </div>
+          ) : (
+            'Conjugate Now'
+          )}
+        </ActionButton>
+
+        {/* Keyboard hints */}
+        <div className='flex items-center gap-4 text-[10px] font-black tracking-widest text-(--secondary-color) uppercase opacity-40'>
+          <div className='flex items-center gap-2'>
+            <kbd className='rounded bg-(--secondary-color)/10 px-1.5 py-0.5 font-mono'>
+              ENTER
+            </kbd>
+            <span>Conjugate</span>
+          </div>
+          <div className='h-4 w-[1px] bg-(--border-color)/50' />
+          <div className='flex items-center gap-2'>
+            <kbd className='rounded bg-(--secondary-color)/10 px-1.5 py-0.5 font-mono'>
+              ESC
+            </kbd>
+            <span>Clear</span>
+          </div>
         </div>
-      )}
-
-      {/* Conjugate button */}
-      <ActionButton
-        onClick={onConjugate}
-        disabled={!canConjugate}
-        gradient
-        borderRadius='2xl'
-        borderBottomThickness={6}
-        className={cn(
-          'h-12 w-full text-base font-semibold sm:h-14 sm:text-lg',
-          'disabled:cursor-not-allowed disabled:opacity-50',
-        )}
-        aria-label={
-          isLoading ? 'Conjugating verb, please wait' : 'Conjugate verb'
-        }
-        aria-busy={isLoading}
-      >
-        {isLoading ? 'Conjugating...' : 'Conjugate'}
-      </ActionButton>
-
-      {/* Keyboard shortcut hint */}
-      <div
-        className='hidden items-center justify-center gap-2 text-xs text-(--secondary-color) sm:flex'
-        aria-hidden='true'
-      >
-        <Keyboard className='h-3.5 w-3.5' />
-        <span>
-          Press{' '}
-          <kbd className='rounded bg-(--background-color) px-1.5 py-0.5 font-mono text-[10px]'>
-            Enter
-          </kbd>{' '}
-          to conjugate,{' '}
-          <kbd className='rounded bg-(--background-color) px-1.5 py-0.5 font-mono text-[10px]'>
-            Esc
-          </kbd>{' '}
-          to clear
-        </span>
       </div>
     </div>
   );

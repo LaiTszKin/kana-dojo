@@ -29,75 +29,72 @@ export default function VerbInfoCard({ verb }: VerbInfoCardProps) {
   return (
     <div
       className={cn(
-        'flex flex-col rounded-2xl',
-        'bg-(--card-color)',
-        'shadow-lg shadow-black/5',
-        'overflow-hidden',
+        'flex flex-col overflow-hidden rounded-[2.5rem]',
+        'bg-(--card-color)/40 backdrop-blur-md',
+        'border border-(--border-color)/30 shadow-2xl shadow-black/5',
       )}
       role='region'
       aria-label={`Verb information for ${verb.dictionaryForm}`}
     >
       {/* Main info section */}
-      <div className='flex flex-col gap-3 p-4 sm:p-5'>
+      <div className='flex flex-col gap-10 p-8 sm:p-12'>
         {/* Header with verb */}
-        <div className='flex items-center gap-3'>
-        <div
-          className={cn(
-            'rounded-lg p-2',
-            'bg-(--main-color)/10',
-          )}
-          aria-hidden='true'
-        >
-            <BookOpen className='h-5 w-5 text-(--main-color)' />
-          </div>
-          <div className='min-w-0 flex-1'>
-            <h3
-              className='font-japanese truncate text-xl font-bold text-(--main-color) sm:text-2xl'
-              lang='ja'
+        <div className='flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between'>
+          <div className='flex items-start gap-6'>
+            <div
+              className='flex h-20 w-20 items-center justify-center rounded-3xl bg-(--main-color) text-(--background-color) shadow-(--main-color)/20 shadow-xl'
+              aria-hidden='true'
             >
-              {verb.dictionaryForm}
-            </h3>
-            <p className='text-sm text-(--secondary-color)'>
-              <span lang='ja'>{verb.reading}</span> ({verb.romaji})
-            </p>
+              <BookOpen className='h-8 w-8' />
+            </div>
+            <div className='flex flex-col gap-1'>
+              <h3
+                className='font-japanese text-5xl font-black tracking-tight text-(--main-color) sm:text-7xl lg:text-8xl'
+                lang='ja'
+              >
+                {verb.dictionaryForm}
+              </h3>
+              <div className='flex items-center gap-3 text-lg font-medium text-(--secondary-color) opacity-60 sm:text-2xl'>
+                <span className='font-japanese' lang='ja'>
+                  {verb.reading}
+                </span>
+                <div className='h-1.5 w-1.5 rounded-full bg-(--border-color)' />
+                <span className='italic'>{verb.romaji}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className='flex items-center gap-2 rounded-full bg-(--main-color)/5 px-4 py-2 ring-1 ring-(--main-color)/10'>
+            <Info className='h-3.5 w-3.5 text-(--main-color) opacity-50' />
+            <span className='text-[10px] font-black tracking-widest text-(--main-color) uppercase'>
+              Analyzed Segment
+            </span>
           </div>
         </div>
 
-        {/* Verb type and stem info */}
+        {/* Verb classification metrics */}
         <div
-          className='grid grid-cols-2 gap-3 sm:grid-cols-3'
+          className='grid grid-cols-1 gap-6 sm:grid-cols-3'
           role='group'
           aria-label='Verb classification details'
         >
           {/* Verb Type */}
-          <div
-            className={cn(
-              'flex flex-col gap-1 rounded-xl p-3',
-              'bg-(--background-color)',
-            )}
-          >
-            <span className='text-xs font-medium tracking-wider text-(--secondary-color) uppercase'>
-              Type
+          <div className='group flex flex-col gap-3 rounded-2xl bg-(--background-color)/50 p-6 ring-1 ring-(--border-color)/50 transition-all hover:bg-(--background-color) hover:ring-(--main-color)/20'>
+            <span className='text-[10px] font-black tracking-[0.2em] text-(--secondary-color) uppercase opacity-40 transition-opacity group-hover:opacity-100'>
+              Grammar Class
             </span>
-            <span
-              className={cn('text-sm font-semibold', verbTypeInfo.colorClass)}
-            >
+            <span className={cn('text-xl font-black', verbTypeInfo.colorClass)}>
               {verbTypeInfo.label}
             </span>
           </div>
 
           {/* Stem */}
-          <div
-            className={cn(
-              'flex flex-col gap-1 rounded-xl p-3',
-              'bg-(--background-color)',
-            )}
-          >
-            <span className='text-xs font-medium tracking-wider text-(--secondary-color) uppercase'>
-              Stem
+          <div className='group flex flex-col gap-3 rounded-2xl bg-(--background-color)/50 p-6 ring-1 ring-(--border-color)/50 transition-all hover:bg-(--background-color) hover:ring-(--main-color)/20'>
+            <span className='text-[10px] font-black tracking-[0.2em] text-(--secondary-color) uppercase opacity-40 transition-opacity group-hover:opacity-100'>
+              Morpheme Stem
             </span>
             <span
-              className='font-japanese text-sm font-semibold text-(--main-color)'
+              className='font-japanese text-2xl font-black text-(--main-color)'
               lang='ja'
             >
               {verb.stem || '—'}
@@ -105,18 +102,12 @@ export default function VerbInfoCard({ verb }: VerbInfoCardProps) {
           </div>
 
           {/* Ending */}
-          <div
-            className={cn(
-              'flex flex-col gap-1 rounded-xl p-3',
-              'bg-(--background-color)',
-              'col-span-2 sm:col-span-1',
-            )}
-          >
-            <span className='text-xs font-medium tracking-wider text-(--secondary-color) uppercase'>
-              Ending
+          <div className='group flex flex-col gap-3 rounded-2xl bg-(--background-color)/50 p-6 ring-1 ring-(--border-color)/50 transition-all hover:bg-(--background-color) hover:ring-(--main-color)/20'>
+            <span className='text-[10px] font-black tracking-[0.2em] text-(--secondary-color) uppercase opacity-40 transition-opacity group-hover:opacity-100'>
+              Ending Particle
             </span>
             <span
-              className='font-japanese text-sm font-semibold text-(--main-color)'
+              className='font-japanese text-2xl font-black text-(--main-color)'
               lang='ja'
             >
               {verb.ending || '—'}
@@ -124,83 +115,112 @@ export default function VerbInfoCard({ verb }: VerbInfoCardProps) {
           </div>
         </div>
 
-        {/* Compound prefix if applicable */}
+        {/* Compound prefix alert */}
         {verb.compoundPrefix && (
           <div
-            className={cn(
-              'flex items-center gap-2 rounded-xl p-3',
-              'bg-(--main-color)/10',
-            )}
+            className='flex items-center gap-4 rounded-2xl bg-(--main-color)/5 p-5 ring-1 ring-(--main-color)/10'
             role='note'
           >
-            <Info
-              className='h-4 w-4 text-(--main-color)'
-              aria-hidden='true'
-            />
-            <span className='text-sm text-(--main-color)'>
-              Compound verb with prefix:{' '}
-              <span className='font-japanese font-semibold' lang='ja'>
-                {verb.compoundPrefix}
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--main-color)/10'>
+              <Info className='h-5 w-5 text-(--main-color)' />
+            </div>
+            <div className='flex flex-col'>
+              <span className='text-[10px] font-black tracking-widest text-(--main-color) uppercase opacity-40'>
+                Complex Structure Detected
               </span>
-            </span>
+              <span className='text-sm font-medium text-(--main-color)'>
+                Compound verb with prefix:{' '}
+                <span className='font-japanese font-black' lang='ja'>
+                  {verb.compoundPrefix}
+                </span>
+              </span>
+            </div>
           </div>
         )}
       </div>
 
-      {/* Expandable explanation section */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className={cn(
-          'flex items-center justify-between px-4 py-3 sm:px-5',
-          'border-t border-(--border-color)',
-          'bg-(--background-color)',
-          'text-sm font-medium text-(--secondary-color)',
-          'hover:bg-(--border-color)/50',
-          'transition-colors duration-200',
-          'cursor-pointer',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-(--main-color) focus-visible:ring-inset',
-        )}
-        aria-expanded={isExpanded}
-        aria-controls='verb-explanation'
-        aria-label={`${isExpanded ? 'Hide' : 'Show'} conjugation rules for ${verbTypeInfo.label} verbs`}
-      >
-        <span>Conjugation Rules</span>
-        {isExpanded ? (
-          <ChevronUp className='h-4 w-4' aria-hidden='true' />
-        ) : (
-          <ChevronDown className='h-4 w-4' aria-hidden='true' />
-        )}
-      </button>
+      {/* Expandable detailed rules section */}
+      <section className='border-t border-(--border-color)/30'>
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={cn(
+            'flex w-full items-center justify-between px-8 py-6 sm:px-12',
+            'bg-(--background-color)/20 hover:bg-(--main-color)/5',
+            'transition-all duration-300',
+            'cursor-pointer focus:bg-(--main-color)/5 focus:outline-none',
+          )}
+          aria-expanded={isExpanded}
+          aria-controls='verb-explanation'
+          aria-label={`${isExpanded ? 'Hide' : 'Show'} conjugation rules for ${verbTypeInfo.label} verbs`}
+        >
+          <div className='flex items-center gap-4'>
+            <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-(--main-color)/10'>
+              <BookOpen className='h-4 w-4 text-(--main-color)' />
+            </div>
+            <span className='text-xs font-black tracking-[0.2em] text-(--main-color) uppercase'>
+              Linguistic Principles
+            </span>
+          </div>
+          <div className='flex items-center gap-4'>
+            <span className='text-[10px] font-bold tracking-widest text-(--secondary-color) uppercase opacity-40'>
+              {isExpanded ? 'Hide details' : 'View documentation'}
+            </span>
+            <div
+              className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-full transition-transform duration-500',
+                isExpanded
+                  ? 'rotate-180 bg-(--main-color) text-white'
+                  : 'bg-(--main-color)/10 text-(--main-color)',
+              )}
+            >
+              <ChevronDown className='h-4 w-4' />
+            </div>
+          </div>
+        </button>
 
-      {/* Explanation content */}
-      {isExpanded && (
+        {/* Animated content expansion */}
         <div
           id='verb-explanation'
           className={cn(
-            'px-4 py-4 sm:px-5',
-            'border-t border-(--border-color)',
-            'bg-(--background-color)',
-            'text-sm text-(--secondary-color)',
+            'grid transition-all duration-500 ease-in-out',
+            isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
           )}
-          role='region'
-          aria-label='Conjugation rules explanation'
         >
-          <div className='space-y-3'>
-            <p>{verbTypeInfo.description}</p>
-            <ul className='space-y-2' role='list'>
-              {verbTypeInfo.rules.map((rule, index) => (
-                <li key={index} className='flex items-start gap-2'>
-                  <span
-                    className='mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-(--main-color)'
-                    aria-hidden='true'
-                  />
-                  <span>{rule}</span>
-                </li>
-              ))}
-            </ul>
+          <div className='overflow-hidden'>
+            <div className='space-y-8 bg-(--background-color)/50 p-8 sm:p-12'>
+              <div className='flex flex-col gap-2'>
+                <h4 className='text-sm font-black tracking-widest text-(--main-color) uppercase'>
+                  Morphological Overview
+                </h4>
+                <p className='text-base leading-relaxed text-(--secondary-color) opacity-70'>
+                  {verbTypeInfo.description}
+                </p>
+              </div>
+
+              <div className='flex flex-col gap-4'>
+                <h4 className='text-sm font-black tracking-widest text-(--main-color) uppercase'>
+                  Core Transformation Rules
+                </h4>
+                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+                  {verbTypeInfo.rules.map((rule, index) => (
+                    <div
+                      key={index}
+                      className='flex items-start gap-4 rounded-xl border border-(--border-color)/30 bg-(--background-color) p-4'
+                    >
+                      <span className='flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-(--main-color) text-[10px] font-black text-white'>
+                        {index + 1}
+                      </span>
+                      <span className='text-sm leading-relaxed font-medium text-(--secondary-color)'>
+                        {rule}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      )}
+      </section>
     </div>
   );
 }
