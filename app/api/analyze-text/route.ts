@@ -4,10 +4,7 @@ import {
   getClientIP,
   createRateLimitHeaders,
 } from '@/shared/lib/rateLimit';
-import {
-  getRedisCachedJson,
-  setRedisCachedJson,
-} from '@/shared/lib/apiCache';
+import { getRedisCachedJson, setRedisCachedJson } from '@/shared/lib/apiCache';
 import type { ApiErrorResponse } from '@/shared/types/api';
 
 // Type for kuromoji token
@@ -76,35 +73,45 @@ function cleanupCache() {
   }
 }
 
-// Type for kuroshiro instance
-type KuroshiroInstance = {
-  _analyzer: {
-    parse: (text: string) => Promise<KuromojiToken[]>;
-  };
+type KuromojiAnalyzerInstance = {
+  init: () => Promise<void>;
+  parse: (text: string) => Promise<KuromojiToken[]>;
 };
 
-// Singleton kuroshiro instance
-let kuroshiroInstance: KuroshiroInstance | null = null;
+type KuromojiAnalyzerConstructor = new () => KuromojiAnalyzerInstance;
+
+// Singleton kuromoji analyzer instance
+let kuromojiAnalyzerInstance: KuromojiAnalyzerInstance | null = null;
+let kuromojiAnalyzerInitPromise: Promise<KuromojiAnalyzerInstance> | null =
+  null;
 
 /**
- * Get or initialize kuroshiro with kuromoji analyzer
+ * Get or initialize kuromoji analyzer
  */
-async function getKuroshiro(): Promise<KuroshiroInstance> {
-  if (kuroshiroInstance) {
-    return kuroshiroInstance;
+async function getKuromojiAnalyzer(): Promise<KuromojiAnalyzerInstance> {
+  if (kuromojiAnalyzerInstance) {
+    return kuromojiAnalyzerInstance;
   }
 
-  const [{ default: Kuroshiro }, { default: KuromojiAnalyzer }] =
-    await Promise.all([
-      import('kuroshiro'),
-      import('kuroshiro-analyzer-kuromoji'),
-    ]);
+  if (kuromojiAnalyzerInitPromise) {
+    return kuromojiAnalyzerInitPromise;
+  }
 
-  const kuroshiro = new Kuroshiro();
-  const analyzer = new KuromojiAnalyzer();
-  await kuroshiro.init(analyzer);
-  kuroshiroInstance = kuroshiro as unknown as KuroshiroInstance;
-  return kuroshiroInstance;
+  kuromojiAnalyzerInitPromise = (async () => {
+    const { default: KuromojiAnalyzer } =
+      await import('kuroshiro-analyzer-kuromoji');
+    const analyzer = new (KuromojiAnalyzer as KuromojiAnalyzerConstructor)();
+    await analyzer.init();
+    kuromojiAnalyzerInstance = analyzer;
+    return analyzer;
+  })();
+
+  try {
+    return await kuromojiAnalyzerInitPromise;
+  } catch (error) {
+    kuromojiAnalyzerInitPromise = null;
+    throw error;
+  }
 }
 
 /**
@@ -256,11 +263,9 @@ export async function POST(request: NextRequest) {
       return response;
     }
 
-    // Get kuroshiro instance with kuromoji
-    const kuroshiro = await getKuroshiro();
-
     // Parse text into tokens using kuromoji
-    const kuromojiTokens = await kuroshiro._analyzer.parse(text);
+    const kuromojiAnalyzer = await getKuromojiAnalyzer();
+    const kuromojiTokens = await kuromojiAnalyzer.parse(text);
 
     // Convert to simplified format
     const analyzedTokens: AnalyzedToken[] = kuromojiTokens.map(token => ({

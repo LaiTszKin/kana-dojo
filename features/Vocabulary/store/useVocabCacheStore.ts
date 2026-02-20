@@ -33,11 +33,10 @@ export const useVocabCacheStore = create<VocabCacheState>()(
     }),
     {
       name: 'vocab-cache',
-      storage: createJSONStorage(() =>
-        typeof window === 'undefined'
-          ? (undefined as unknown as Storage)
-          : sessionStorage,
-      ),
+      storage:
+        typeof window !== 'undefined'
+          ? createJSONStorage(() => sessionStorage)
+          : undefined,
     },
   ),
 );

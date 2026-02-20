@@ -4,8 +4,8 @@ import React from 'react';
 import useKanaStore from '@/features/Kana/store/useKanaStore';
 import { useStatsStore } from '@/features/Progress';
 import { generateKanaQuestion } from '@/features/Kana/lib/generateKanaQuestions';
-import type { KanaCharacter } from '@/features/Kana/lib/generateKanaQuestions';
 import { flattenKanaGroups } from '@/features/Kana/lib/flattenKanaGroup';
+import type { KanaCharacter } from '@/features/Kana/lib/flattenKanaGroup';
 import { getSelectionLabels } from '@/shared/lib/selectionFormatting';
 import { shuffle } from '@/shared/lib/shuffle';
 import Blitz, { type BlitzConfig } from '@/shared/components/Blitz';
@@ -17,7 +17,7 @@ export default function BlitzKana() {
   );
 
   const selectedKana = React.useMemo(
-    () => flattenKanaGroups(kanaGroupIndices) as unknown as KanaCharacter[],
+    () => flattenKanaGroups(kanaGroupIndices),
     [kanaGroupIndices],
   );
 

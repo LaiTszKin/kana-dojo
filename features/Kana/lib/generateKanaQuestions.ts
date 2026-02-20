@@ -1,13 +1,8 @@
 import { Random } from 'random-js';
+import type { KanaCharacter } from './flattenKanaGroup';
 
 const random = new Random();
-
-export type KanaCharacter = {
-  kana: string;
-  romaji: string;
-  type: string;
-  group: string;
-};
+export type { KanaCharacter } from './flattenKanaGroup';
 
 export function generateKanaQuestion(
   selectedKana: KanaCharacter[],

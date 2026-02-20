@@ -3,8 +3,8 @@
 import React from 'react';
 import useKanaStore from '@/features/Kana/store/useKanaStore';
 import { generateKanaQuestion } from '@/features/Kana/lib/generateKanaQuestions';
-import type { KanaCharacter } from '@/features/Kana/lib/generateKanaQuestions';
 import { flattenKanaGroups } from '@/features/Kana/lib/flattenKanaGroup';
+import type { KanaCharacter } from '@/features/Kana/lib/flattenKanaGroup';
 import { getSelectionLabels } from '@/shared/lib/selectionFormatting';
 import { shuffle } from '@/shared/lib/shuffle';
 import Gauntlet, { type GauntletConfig } from '@/shared/components/Gauntlet';
@@ -20,7 +20,7 @@ const GauntletKana: React.FC<GauntletKanaProps> = ({ onCancel }) => {
   );
 
   const selectedKana = React.useMemo(
-    () => flattenKanaGroups(kanaGroupIndices) as unknown as KanaCharacter[],
+    () => flattenKanaGroups(kanaGroupIndices),
     [kanaGroupIndices],
   );
 
