@@ -6,20 +6,8 @@ import {
 } from '@/shared/lib/rateLimit';
 import { getRedisCachedJson, setRedisCachedJson } from '@/shared/lib/apiCache';
 import type { ApiErrorResponse } from '@/shared/types/api';
-
-// Type for kuromoji token
-interface KuromojiToken {
-  surface_form: string; // The actual text
-  pos: string; // Part of speech
-  pos_detail_1: string; // POS detail 1
-  pos_detail_2: string; // POS detail 2
-  pos_detail_3: string; // POS detail 3
-  conjugated_type: string; // Conjugation type
-  conjugated_form: string; // Conjugation form
-  basic_form: string; // Dictionary form
-  reading: string; // Katakana reading
-  pronunciation: string; // Pronunciation
-}
+import type KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji';
+import type { KuromojiToken } from 'kuroshiro-analyzer-kuromoji';
 
 // Simplified token for client
 export interface AnalyzedToken {
@@ -73,22 +61,14 @@ function cleanupCache() {
   }
 }
 
-type KuromojiAnalyzerInstance = {
-  init: () => Promise<void>;
-  parse: (text: string) => Promise<KuromojiToken[]>;
-};
-
-type KuromojiAnalyzerConstructor = new () => KuromojiAnalyzerInstance;
-
 // Singleton kuromoji analyzer instance
-let kuromojiAnalyzerInstance: KuromojiAnalyzerInstance | null = null;
-let kuromojiAnalyzerInitPromise: Promise<KuromojiAnalyzerInstance> | null =
-  null;
+let kuromojiAnalyzerInstance: KuromojiAnalyzer | null = null;
+let kuromojiAnalyzerInitPromise: Promise<KuromojiAnalyzer> | null = null;
 
 /**
  * Get or initialize kuromoji analyzer
  */
-async function getKuromojiAnalyzer(): Promise<KuromojiAnalyzerInstance> {
+async function getKuromojiAnalyzer(): Promise<KuromojiAnalyzer> {
   if (kuromojiAnalyzerInstance) {
     return kuromojiAnalyzerInstance;
   }
@@ -100,7 +80,7 @@ async function getKuromojiAnalyzer(): Promise<KuromojiAnalyzerInstance> {
   kuromojiAnalyzerInitPromise = (async () => {
     const { default: KuromojiAnalyzer } =
       await import('kuroshiro-analyzer-kuromoji');
-    const analyzer = new (KuromojiAnalyzer as KuromojiAnalyzerConstructor)();
+    const analyzer = new KuromojiAnalyzer();
     await analyzer.init();
     kuromojiAnalyzerInstance = analyzer;
     return analyzer;
