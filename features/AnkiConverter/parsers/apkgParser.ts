@@ -14,33 +14,13 @@ import JSZip from 'jszip';
 import type { ParsedAnkiData } from '../types';
 import { ConversionError, ErrorCode } from '../types';
 import { parseSQLite } from './sqliteParser';
+import { getUncompressedSize } from './zipUtils';
 
 /**
  * Database file names to look for in APKG archives
  * Priority order: anki21 (newer) > anki2 (older)
  */
 const DATABASE_FILES = ['collection.anki21', 'collection.anki2'] as const;
-
-/**
- * Safely read uncompressed size from JSZip internal metadata.
- *
- * JSZip does not expose uncompressed size in the public JSZipObject API.
- * We read the optional internal value defensively and fall back to compressed
- * size when unavailable.
- */
-function getUncompressedSize(
-  file: JSZip.JSZipObject,
-  fallbackSize: number,
-): number {
-  const rawData = Reflect.get(file, '_data');
-  if (typeof rawData === 'object' && rawData !== null) {
-    const size = Reflect.get(rawData, 'uncompressedSize');
-    if (typeof size === 'number' && Number.isFinite(size) && size >= 0) {
-      return size;
-    }
-  }
-  return fallbackSize;
-}
 
 /**
  * Result of extracting the database from an APKG file
